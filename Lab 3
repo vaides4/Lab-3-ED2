@@ -1,0 +1,77 @@
+#include <Arduino.h>
+
+portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
+
+//leds timer
+#define LED1_t 23
+#define LED2_t 22
+#define LED3_t 21
+#define LED4_t 19
+
+//leds contador
+#define LED1_c 5
+#define LED2_c 4
+#define LED3_c 2
+#define LED4_c 15
+
+//alarma buzzer
+#define LED_alarma 18
+
+
+//contador
+volatile uint8_t contador;
+volatile uint8_t contador_timer;
+
+//Variables Globales
+hw_timer_t *timer = NULL;
+
+//prototipo de funcion
+void initTimer(void);
+
+//timer
+void IRAM_ATTR timer_ISR(void){
+  contador_timer++;
+  if(contador_timer > 15){
+    contador_timer = 0;
+  }
+  
+}
+
+// arreglos botones
+struct Boton1{
+  const uint8_t BOT_inc;
+  bool pressed;
+};
+Boton1 incrementar = {13, false};
+
+struct Boton2{
+  const uint8_t BOT_dec;
+  bool pressed;
+};
+Boton2 decrementar = {35, false};
+
+struct Boton3{
+  const uint8_t BOT_reset;
+  bool pressed;
+};
+
+Boton3 resetear = {32, false};
+
+//variables de hadle interrupcion
+void IRAM_ATTR handle_inc(){
+  portENTER_CRITICAL_ISR(&mux);
+  incrementar.pressed = true;
+  portEXIT_CRITICAL_ISR(&mux);
+}
+
+void IRAM_ATTR handle_dec(){
+  portENTER_CRITICAL_ISR(&mux);
+  decrementar.pressed = true;
+  portEXIT_CRITICAL_ISR(&mux);
+}
+
+void IRAM_ATTR handle_reset(){
+  portENTER_CRITICAL_ISR(&mux);
+  resetear.pressed = true;
+  portEXIT_CRITICAL_ISR(&mux);
+}

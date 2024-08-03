@@ -75,3 +75,278 @@ void IRAM_ATTR handle_reset(){
   resetear.pressed = true;
   portEXIT_CRITICAL_ISR(&mux);
 }
+
+void setup() {
+  Serial.begin(115200);
+  //salidas leds timer
+  pinMode(LED1_t, OUTPUT);
+  pinMode(LED2_t, OUTPUT);
+  pinMode(LED3_t, OUTPUT);
+  pinMode(LED4_t, OUTPUT);
+
+  //salidas leds contador
+  pinMode(LED1_c, OUTPUT);
+  pinMode(LED2_c, OUTPUT);
+  pinMode(LED3_c, OUTPUT);
+  pinMode(LED4_c, OUTPUT);
+
+  //salida led alarma
+  pinMode(LED_alarma, OUTPUT);
+
+  //entradas botones
+  pinMode(incrementar.BOT_inc, INPUT_PULLUP);
+  attachInterrupt(incrementar.BOT_inc, handle_inc, FALLING);
+  pinMode(decrementar.BOT_dec, INPUT_PULLUP);
+  attachInterrupt(decrementar.BOT_dec, handle_dec, FALLING);
+  pinMode(resetear.BOT_reset, INPUT_PULLUP);
+  attachInterrupt(resetear.BOT_reset, handle_reset, FALLING);
+
+  //estado inicial
+  digitalWrite(LED1_t, LOW);
+  digitalWrite(LED2_t, LOW);
+  digitalWrite(LED3_t, LOW);
+  digitalWrite(LED4_t, LOW);
+  digitalWrite(LED1_c, LOW);
+  digitalWrite(LED2_c, LOW);
+  digitalWrite(LED3_c, LOW);
+  digitalWrite(LED4_c, LOW);
+  digitalWrite(LED_alarma, LOW);
+
+  initTimer();
+
+}
+
+void loop() {
+  if(incrementar.pressed){
+    incrementar.pressed = false;
+    contador ++;
+    if (contador > 15) {
+    contador = 0;
+    }
+  } 
+
+  if(decrementar.pressed){
+    decrementar.pressed = false;
+    contador --;
+  }
+
+  if(resetear.pressed){
+    resetear.pressed = false;
+    contador_timer = 0;
+  }
+
+  if (contador_timer == contador) {
+    contador_timer = 0;
+    digitalWrite(LED_alarma, HIGH);
+    delay(1000);
+    digitalWrite(LED_alarma, LOW);
+  }
+  Serial.print(contador_timer);Serial.print(" / ");
+  Serial.println(contador);
+  
+  switch (contador_timer) {
+      case 0:
+        digitalWrite(LED1_t, LOW);
+        digitalWrite(LED2_t, LOW);
+        digitalWrite(LED3_t, LOW);
+        digitalWrite(LED4_t, LOW);
+        break;
+      case 1:
+        digitalWrite(LED1_t, HIGH);
+        digitalWrite(LED2_t, LOW);
+        digitalWrite(LED3_t, LOW);
+        digitalWrite(LED4_t, LOW);
+        break;
+      case 2:
+        digitalWrite(LED1_t, LOW);
+        digitalWrite(LED2_t, HIGH);
+        digitalWrite(LED3_t, LOW);
+        digitalWrite(LED4_t, LOW);
+        break;
+      case 3:
+        digitalWrite(LED1_t, HIGH);
+        digitalWrite(LED2_t, HIGH);
+        digitalWrite(LED3_t, LOW);
+        digitalWrite(LED4_t, LOW);
+        break;
+      case 4:
+        digitalWrite(LED1_t, LOW);
+        digitalWrite(LED2_t, LOW);
+        digitalWrite(LED3_t, HIGH);
+        digitalWrite(LED4_t, LOW);
+        break;
+      case 5:
+        digitalWrite(LED1_t, HIGH);
+        digitalWrite(LED2_t, LOW);
+        digitalWrite(LED3_t, HIGH);
+        digitalWrite(LED4_t, LOW);
+        break;
+      case 6:
+        digitalWrite(LED1_t, LOW);
+        digitalWrite(LED2_t, HIGH);
+        digitalWrite(LED3_t, HIGH);
+        digitalWrite(LED4_t, LOW);
+        break;
+      case 7:
+        digitalWrite(LED1_t, HIGH);
+        digitalWrite(LED2_t, HIGH);
+        digitalWrite(LED3_t, HIGH);
+        digitalWrite(LED4_t, LOW);
+        break;
+      case 8:
+        digitalWrite(LED1_t, LOW);
+        digitalWrite(LED2_t, LOW);
+        digitalWrite(LED3_t, LOW);
+        digitalWrite(LED4_t, HIGH);
+        break;
+      case 9:
+        digitalWrite(LED1_t, HIGH);
+        digitalWrite(LED2_t, LOW);
+        digitalWrite(LED3_t, LOW);
+        digitalWrite(LED4_t, HIGH);
+        break;
+      case 10:
+        digitalWrite(LED1_t, LOW);
+        digitalWrite(LED2_t, HIGH);
+        digitalWrite(LED3_t, LOW);
+        digitalWrite(LED4_t, HIGH);
+        break;
+      case 11:
+        digitalWrite(LED1_t, HIGH);
+        digitalWrite(LED2_t, HIGH);
+        digitalWrite(LED3_t, LOW);
+        digitalWrite(LED4_t, HIGH);
+        break;
+      case 12:
+        digitalWrite(LED1_t, LOW);
+        digitalWrite(LED2_t, LOW);
+        digitalWrite(LED3_t, HIGH);
+        digitalWrite(LED4_t, HIGH);
+        break;
+      case 13:
+        digitalWrite(LED1_t, HIGH);
+        digitalWrite(LED2_t, LOW);
+        digitalWrite(LED3_t, HIGH);
+        digitalWrite(LED4_t, HIGH);
+        break;
+      case 14:
+        digitalWrite(LED1_t, LOW);
+        digitalWrite(LED2_t, HIGH);
+        digitalWrite(LED3_t, HIGH);
+        digitalWrite(LED4_t, HIGH);
+        break;
+      case 15:
+        digitalWrite(LED1_t, HIGH);
+        digitalWrite(LED2_t, HIGH);
+        digitalWrite(LED3_t, HIGH);
+        digitalWrite(LED4_t, HIGH);
+        break;
+}
+delay(25);
+switch (contador) {
+      case 0:
+        digitalWrite(LED1_c, LOW);
+        digitalWrite(LED2_c, LOW);
+        digitalWrite(LED3_c, LOW);
+        digitalWrite(LED4_c, LOW);
+        break;
+      case 1:
+        digitalWrite(LED1_c, HIGH);
+        digitalWrite(LED2_c, LOW);
+        digitalWrite(LED3_c, LOW);
+        digitalWrite(LED4_c, LOW);
+        break;
+      case 2:
+        digitalWrite(LED1_c, LOW);
+        digitalWrite(LED2_c, HIGH);
+        digitalWrite(LED3_c, LOW);
+        digitalWrite(LED4_c, LOW);
+        break;
+      case 3:
+        digitalWrite(LED1_c, HIGH);
+        digitalWrite(LED2_c, HIGH);
+        digitalWrite(LED3_c, LOW);
+        digitalWrite(LED4_c, LOW);
+        break;
+      case 4:
+        digitalWrite(LED1_c, LOW);
+        digitalWrite(LED2_c, LOW);
+        digitalWrite(LED3_c, HIGH);
+        digitalWrite(LED4_c, LOW);
+        break;
+      case 5:
+        digitalWrite(LED1_c, HIGH);
+        digitalWrite(LED2_c, LOW);
+        digitalWrite(LED3_c, HIGH);
+        digitalWrite(LED4_c, LOW);
+        break;
+      case 6:
+        digitalWrite(LED1_c, LOW);
+        digitalWrite(LED2_c, HIGH);
+        digitalWrite(LED3_c, HIGH);
+        digitalWrite(LED4_c, LOW);
+        break;
+      case 7:
+        digitalWrite(LED1_c, HIGH);
+        digitalWrite(LED2_c, HIGH);
+        digitalWrite(LED3_c, HIGH);
+        digitalWrite(LED4_c, LOW);
+        break;
+      case 8:
+        digitalWrite(LED1_c, LOW);
+        digitalWrite(LED2_c, LOW);
+        digitalWrite(LED3_c, LOW);
+        digitalWrite(LED4_c, HIGH);
+        break;
+      case 9:
+        digitalWrite(LED1_c, HIGH);
+        digitalWrite(LED2_c, LOW);
+        digitalWrite(LED3_c, LOW);
+        digitalWrite(LED4_c, HIGH);
+        break;
+      case 10:
+        digitalWrite(LED1_c, LOW);
+        digitalWrite(LED2_c, HIGH);
+        digitalWrite(LED3_c, LOW);
+        digitalWrite(LED4_c, HIGH);
+        break;
+      case 11:
+        digitalWrite(LED1_c, HIGH);
+        digitalWrite(LED2_c, HIGH);
+        digitalWrite(LED3_c, LOW);
+        digitalWrite(LED4_c, HIGH);
+        break;
+      case 12:
+        digitalWrite(LED1_c, LOW);
+        digitalWrite(LED2_c, LOW);
+        digitalWrite(LED3_c, HIGH);
+        digitalWrite(LED4_c, HIGH);
+        break;
+      case 13:
+        digitalWrite(LED1_c, HIGH);
+        digitalWrite(LED2_c, LOW);
+        digitalWrite(LED3_c, HIGH);
+        digitalWrite(LED4_c, HIGH);
+        break;
+      case 14:
+        digitalWrite(LED1_c, LOW);
+        digitalWrite(LED2_c, HIGH);
+        digitalWrite(LED3_c, HIGH);
+        digitalWrite(LED4_c, HIGH);
+        break;
+      case 15:
+        digitalWrite(LED1_c, HIGH);
+        digitalWrite(LED2_c, HIGH);
+        digitalWrite(LED3_c, HIGH);
+        digitalWrite(LED4_c, HIGH);
+        break;
+  }
+}
+
+//Funcion para iniciar timer 0
+void initTimer(void) {
+  timer = timerBegin(0, 80, true);
+  timerAttachInterrupt(timer, timer_ISR, true);
+  timerAlarmWrite(timer, 250000, true);
+  timerAlarmEnable(timer);
+}
